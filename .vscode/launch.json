@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "pacman - debug",
+      "program": "${workspaceFolder}/build/Debug/bin/pacman",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build debug",
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "pacmanTest - debug",
+      "program": "${workspaceFolder}/build/Debug/bin/pacman-test",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build debug",
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "setup debug",
+      "type": "shell",
+      "args": [
+        "Debug"
+      ],
+      "command": "${workspaceFolder}/setup.sh",
+      "group": {
+        "kind": "build"
+      }
+    },
+    {
+      "label": "build debug",
+      "type": "shell",
+      "args": [
+        "Debug"
+      ],
+      "command": "${workspaceFolder}/build.sh",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

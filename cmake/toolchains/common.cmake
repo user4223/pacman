@@ -1,0 +1,1 @@
+set(CMAKE_POLICY_VERSION_MINIMUM "3.5") # 2 make gtest/1.16 dependency buildable
