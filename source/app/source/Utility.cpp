@@ -8,6 +8,7 @@ ftxui::ComponentDecorator exitOnEscape(ftxui::ScreenInteractive &screen)
         if (event == ftxui::Event::Character('q') || event == ftxui::Event::Escape)
         {
             screen.Exit();
+            return true;
         } 
         return false; });
 }
