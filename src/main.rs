@@ -1,5 +1,8 @@
 use rand::Rng;
-use std::io;
+use std::{io, thread, time::Duration};
+
+#[path = "framebuffer/framebuffer.rs"]
+mod framebuffer;
 
 fn read_line() -> String {
     let mut input = String::new();
@@ -13,8 +16,19 @@ fn generate_number() -> i32 {
     rand::rng().random_range(1..=100)
 }
 
-const TOP: char = '\u{2500}';
+const HORIZONTAL: char = '\u{2501}';
+const VERTICAL: char = '\u{2503}';
+
+fn draw_horizontal_line(length: u32) {
+    for _i in (0..length).rev() {
+        print!("{HORIZONTAL}");
+    }
+}
 
 fn main() {
-    println!("Input: {TOP} {} {}", generate_number(), read_line());
+    draw_horizontal_line(100);
+
+    let framebuffer = framebuffer::Framebuffer::new();
+    thread::sleep(Duration::from_secs(10));
+    framebuffer.terminate_wait();
 }
