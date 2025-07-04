@@ -1,4 +1,5 @@
 use std::sync::mpsc;
+use std::sync::mpsc::{TryRecvError::Disconnected, TryRecvError::Empty};
 use std::thread;
 use std::time::Duration;
 
@@ -20,8 +21,8 @@ impl Framebuffer {
                     thread::sleep(Duration::from_millis(100));
                     match rx.try_recv() {
                         Ok(_) => break,
-                        Err(mpsc::TryRecvError::Disconnected) => break,
-                        Err(mpsc::TryRecvError::Empty) => continue,
+                        Err(Disconnected) => break,
+                        Err(Empty) => continue,
                     }
                 }
             }),
