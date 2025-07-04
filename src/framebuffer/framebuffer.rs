@@ -17,12 +17,9 @@ impl Framebuffer {
                 counter += 1;
                 thread::sleep(Duration::from_millis(100));
                 match rx.try_recv() {
-                    Ok(_) | Err(mpsc::TryRecvError::Disconnected) => {
-                        break;
-                    }
-                    Err(mpsc::TryRecvError::Empty) => {
-                        continue;
-                    }
+                    Ok(_) => break,
+                    Err(mpsc::TryRecvError::Disconnected) => break,
+                    Err(mpsc::TryRecvError::Empty) => continue,
                 }
             }
         });
