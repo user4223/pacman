@@ -1,5 +1,5 @@
 use rand::Rng;
-use std::{io, thread, time::Duration};
+use std::{array::from_mut, collections::btree_map::Range, io, thread, time::Duration};
 
 #[path = "pacman/framebuffer.rs"]
 mod framebuffer;
@@ -32,6 +32,11 @@ fn main() {
 
     let keycontroller = keycontroller::KeyController::new(|key| println!("{key}"));
     let framebuffer = framebuffer::Framebuffer::new();
-    thread::sleep(Duration::from_secs(10));
-    framebuffer.terminate_wait();
+    for i in 0..10 {
+        framebuffer.update(format!("{} hello", i));
+        thread::sleep(Duration::from_millis(600));
+        framebuffer.clear();
+        thread::sleep(Duration::from_millis(200));
+    }
+    framebuffer.stop();
 }
