@@ -1,8 +1,10 @@
 use rand::Rng;
 use std::{io, thread, time::Duration};
 
-#[path = "framebuffer/framebuffer.rs"]
+#[path = "pacman/framebuffer.rs"]
 mod framebuffer;
+#[path = "pacman/keycontroller.rs"]
+mod keycontroller;
 
 fn read_line() -> String {
     let mut input = String::new();
@@ -28,6 +30,7 @@ fn draw_horizontal_line(length: u32) {
 fn main() {
     draw_horizontal_line(100);
 
+    let keycontroller = keycontroller::KeyController::new(|key| println!("{key}"));
     let framebuffer = framebuffer::Framebuffer::new();
     thread::sleep(Duration::from_secs(10));
     framebuffer.terminate_wait();
