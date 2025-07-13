@@ -6,9 +6,23 @@ use std::time::Duration;
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
 
+pub struct Line {
+    number: u16, // 0 means invalid since numbering starts with 1
+    payload: String,
+}
+
+impl Line {
+    pub fn is_valid(&self) -> bool {
+        if self.number == 0 {
+            return false;
+        }
+        return true;
+    }
+}
+
 pub struct Framebuffer {
     thread: thread::JoinHandle<()>,
-    output_sender: mpsc::Sender<String>,
+    output_sender: mpsc::Sender<Line>,
 }
 
 impl Framebuffer {
@@ -18,27 +32,30 @@ impl Framebuffer {
             output_sender,
             thread: thread::spawn(move || {
                 let goto_start = cursor::Goto(1, 1);
-                let mut output: Option<String> = None;
-                let mut stdout = std::io::stdout().into_raw_mode().unwrap();
+                let mut output: Line = Line {
+                    number: 0,
+                    payload: String::from(""),
+                };
+                let mut stdout = std::io::stdout().lock().into_raw_mode().unwrap();
                 write!(stdout, "{}{}", clear::All, goto_start).unwrap();
                 loop {
-                    match output.clone() {
-                        None => {
+                    match output.is_valid() {
+                        false => {
                             write!(stdout, "{}", clear::CurrentLine).unwrap();
                         }
-                        Some(v) => {
-                            write!(stdout, "{}{}{}", clear::CurrentLine, goto_start, v).unwrap()
-                        }
+                        true => write!(
+                            stdout,
+                            "{}{}{}",
+                            clear::CurrentLine,
+                            goto_start,
+                            output.payload
+                        )
+                        .unwrap(),
                     }
                     stdout.flush().unwrap();
                     thread::sleep(Duration::from_millis(40));
                     match output_receiver.try_recv() {
-                        Ok(v) => {
-                            output = match v.is_empty() {
-                                true => None,
-                                false => Some(v),
-                            }
-                        }
+                        Ok(v) => output = v,
                         Err(Disconnected) => break,
                         Err(Empty) => continue,
                     }
@@ -49,11 +66,21 @@ impl Framebuffer {
     }
 
     pub fn update(&self, line: String) {
-        self.output_sender.send(line).unwrap();
+        self.output_sender
+            .send(Line {
+                number: 1,
+                payload: line,
+            })
+            .unwrap();
     }
 
     pub fn clear(&self) {
-        self.output_sender.send(String::from("")).unwrap();
+        self.output_sender
+            .send(Line {
+                number: 0,
+                payload: String::from(""),
+            })
+            .unwrap();
     }
 
     pub fn stop(self) {
